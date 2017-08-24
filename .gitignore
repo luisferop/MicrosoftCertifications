@@ -3,3 +3,7 @@
 ################################################################################
 
 /70-483/sln70483/prjChap01/bin/Debug
+/70-483/sln70483/prjChap01/obj/Debug
+*.suo
+/70-483/sln70483/prjChap01/obj/Debug
+/70-483/sln70483/prjChap01/obj/Debug
