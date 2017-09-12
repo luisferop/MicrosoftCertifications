@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace prjChap01
 {
     class Program
     {
+        #region Thread and Tasks
         #region Listing 1-1 = First example
         //public static void ThreadMethod()
         //{
@@ -177,17 +181,249 @@ namespace prjChap01
 
         #region Listing 1-9 = Tasks that returns a value
 
+        //public static void Main()
+        //{
+        //    Task<int> t = Task.Run(() => {
+        //        Console.Write("Enter a number: ");
+        //        string s = Console.ReadLine();
+
+        //        return int.Parse(s);
+        //    });
+        //    Console.WriteLine("Number typed: {0}",t.Result);
+        //    Console.ReadKey();
+        //}
+        #endregion
+
+        #region Listing 1-10 = Tasks with continuation
+
+        //public static void Main()
+        //{
+        //    Task<int> t = Task.Run(() => {
+        //        Console.Write("Enter a number: ");
+        //        string s = Console.ReadLine();
+
+        //        return int.Parse(s);
+        //    }).ContinueWith(( i ) => {
+        //        return i.Result * 2;
+        //    });
+        //    Console.WriteLine("Number typed: {0}", t.Result);
+        //    Console.ReadKey();
+        //}
+
+        #endregion
+
+        #region Listing 1-11 = Tasks with continuation (overloads)
+
+        //public static void Main()
+        //{
+        //    Task<int> t = Task.Run(() => {
+        //        Console.Write("Enter a number: ");
+        //        string s = Console.ReadLine();
+
+        //        return int.Parse(s);
+        //    });
+        //    t.ContinueWith((i) =>
+        //    {
+        //        Console.WriteLine("Canceled");
+        //    }, TaskContinuationOptions.OnlyOnCanceled);
+        //    t.ContinueWith((i) =>
+        //    {
+        //        Console.WriteLine("Faulted");
+        //    }, TaskContinuationOptions.OnlyOnFaulted);
+        //    var completedTask = t.ContinueWith((i) =>
+        //    {
+        //        Console.WriteLine("Completed");
+        //    }, TaskContinuationOptions.OnlyOnRanToCompletion);
+        //    completedTask.Wait();
+
+        //    Console.WriteLine("Number typed: {0}", t.Result);
+        //    Console.ReadKey();
+        //}
+
+        #endregion
+
+        #region Listing 1-12 Child tasks
+        //public static void Main()
+        //{
+        //    Task<Int32[]> parent = Task.Run(() =>
+        //    {
+        //        var results = new Int32[3];
+        //        new Task(() => results[0] = 0,
+        //        TaskCreationOptions.AttachedToParent).Start();
+        //        new Task(() => results[1] = 1,
+        //        TaskCreationOptions.AttachedToParent).Start();
+        //        new Task(() => results[2] = 2,
+        //        TaskCreationOptions.AttachedToParent).Start();
+        //        return results;
+        //    });
+        //    var finalTask = parent.ContinueWith(
+        //    parentTask => {
+        //        foreach (int i in parentTask.Result)
+        //            Console.WriteLine(i);
+        //    });
+        //    finalTask.Wait();
+        //    Console.ReadKey();
+        //}
+        #endregion
+
+        #region Listing 1-13 TaskFactory
+        //public static void Main()
+        //{
+        //    Task<Int32[]> parent = Task.Run(()=> {
+        //        Int32[] results = new Int32[3];
+        //        TaskFactory tf = new TaskFactory(TaskCreationOptions.AttachedToParent, TaskContinuationOptions.ExecuteSynchronously);
+        //        tf.StartNew(() => results[0] = 0);
+        //        tf.StartNew(() => results[1] = 1);
+        //        tf.StartNew(() => results[2] = 2);
+
+        //        return results;
+        //    });
+        //    Task finalTask = parent.ContinueWith(parentTask =>
+        //    {
+        //        foreach (int item in parent.Result)
+        //        {
+        //            Console.WriteLine(item);
+        //        }
+        //    });
+        //    finalTask.Wait();
+        //    Console.ReadKey();
+        //}
+        #endregion
+
+        #region Listing 1-14 WaitAll
+        //public static void Main()
+        //{
+        //    Task[] tasks = new Task[3];
+
+        //    tasks[0] = Task.Run(() => {
+        //        Thread.Sleep(1000);
+        //        Console.WriteLine(1);
+        //        return 1;
+        //    });
+        //    tasks[1] = Task.Run(() => {
+        //        Thread.Sleep(1000);
+        //        Console.WriteLine(2);
+        //        return 2;
+        //    });
+        //    tasks[2] = Task.Run(() => {
+        //        Thread.Sleep(1000);
+        //        Console.WriteLine(3);
+        //        return 3;
+        //    });
+        //    Task.WaitAll(tasks);
+
+        //    Console.ReadKey();
+        //}
+        #endregion
+
+        #region Listing 1-15 WaitAny
+        //public static void Main()
+        //{
+        //    Task<int>[] tasks = new Task<int>[3];
+
+        //    tasks[0] = Task.Run(() =>
+        //    {
+        //        Thread.Sleep(5000);
+        //        return 1;
+        //    });
+        //    tasks[1] = Task.Run(() =>
+        //    {
+        //        Thread.Sleep(2000);
+        //        return 2;
+        //    });
+        //    tasks[2] = Task.Run(() =>
+        //    {
+        //        Thread.Sleep(3000);
+        //        return 3;
+        //    });
+        //    while (tasks.Length > 0)
+        //    {
+        //        int i = Task.WaitAny(tasks);
+        //        Task<int> completedTask = tasks[i];
+        //        Console.WriteLine(completedTask.Result);
+        //        var temp = tasks.ToList();
+        //        temp.RemoveAt(i);
+        //        tasks = temp.ToArray();
+        //    }
+        //    Console.ReadKey();
+        //}
+        #endregion
+        #endregion
+
+        #region Parallel Class
+        #region Listing 1-16 PArallel.For and Parallel.ForEach
+        //public static void Main()
+        //{
+        //    Parallel.For(0, 10, i => {
+        //        Thread.Sleep(1000);
+        //        Console.Write("*");
+        //    });
+
+        //    var numbers = Enumerable.Range(0, 10);
+        //    Parallel.ForEach(numbers, i => {
+        //        Thread.Sleep(1);
+        //        Console.Write("-");
+        //    });
+        //}
+        #endregion
+
+        #region Listing 1-17 Parallel.Break
+        //public static void Main()
+        //{
+        //    ParallelLoopResult result = Parallel.For(0, 1000, (int i, ParallelLoopState loopState) => {
+        //        if (i == 500)
+        //        {
+        //            Console.WriteLine("Breaking loop");
+        //            loopState.Stop();
+        //        }
+        //        return;
+        //    });
+
+        //    Console.WriteLine(result.IsCompleted.ToString());
+        //    Console.WriteLine(result.LowestBreakIteration.ToString());
+        //    Console.ReadKey();
+        //}
+        #endregion
+        #endregion
+
+        #region Async and Await
+
+        #region Listing 1-18 Async/Await
+        //public static void Main()
+        //{
+        //    string result = DownloadContent().Result;
+        //    Console.WriteLine(result);
+        //    Console.ReadKey();
+        //}
+        //public static async Task<string> DownloadContent()
+        //{
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        string result = await client.GetStringAsync("http://www.microsoft.com");
+        //        return result;
+        //    }
+        //}
+        #endregion
+
+        #region Listing 1-19 Scalability versus Responsiveness
         public static void Main()
         {
-            Task<int> t = Task.Run(() => {
-                Console.Write("Enter a number: ");
-                string s = Console.ReadLine();
-
-                return int.Parse(s);
-            });
-            Console.WriteLine("Number typed: {0}",t.Result);
-            Console.ReadKey();
+            
         }
+        public Task SleepAsyncA(int millisecondsTimeout)
+        {
+            return Task.Run(() => Thread.Sleep(millisecondsTimeout));
+        }
+
+        public Task SleepAsyncB(int millisecondsTimeout)
+        {
+            TaskCompletionSource<bool> tcs = null;
+            var t = new Timer(delegate { tcs.TrySetResult(true); }, null, -1, -1);
+            tcs = new TaskCompletionSource<bool>(t);
+            t.Change(millisecondsTimeout, -1);
+            return tcs.Task;
+        }
+        #endregion
         #endregion
     }
 }
